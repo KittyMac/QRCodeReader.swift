@@ -170,6 +170,12 @@ public class QRCodeReaderViewController: UIViewController {
     }
 
     readerView.displayable.cameraView.layer.insertSublayer(codeReader.previewLayer, at: 0)
+    
+    // add support for tap to focus
+    let shortTap = UITapGestureRecognizer(target: self, action: #selector(QRCodeReaderViewController.FocusCamera))
+    shortTap.numberOfTapsRequired = 1
+    shortTap.numberOfTouchesRequired = 1
+    readerView.displayable.cameraView.addGestureRecognizer(shortTap)
 
     // Setup constraints
 
@@ -177,7 +183,24 @@ public class QRCodeReaderViewController: UIViewController {
       view.addConstraint(NSLayoutConstraint(item: readerView.view, attribute: attribute, relatedBy: .equal, toItem: view, attribute: attribute, multiplier: 1, constant: 0))
     }
   }
-
+    
+    func FocusCamera(_ gesture: UITapGestureRecognizer) {
+        let previewLayer = codeReader.previewLayer
+        let device = codeReader.defaultDevice
+        
+        let touchPoint: CGPoint = gesture.location(in: readerView.displayable.cameraView)
+        let convertedPoint: CGPoint = previewLayer.captureDevicePointOfInterest(for: touchPoint)
+        if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(AVCaptureFocusMode.autoFocus) {
+            do {
+                try device.lockForConfiguration()
+                device.focusPointOfInterest = convertedPoint
+                device.focusMode = AVCaptureFocusMode.autoFocus
+                device.unlockForConfiguration()
+            } catch {
+                print("unable to focus")
+            }
+        }
+    }
   // MARK: - Controlling the Reader
 
   /// Starts scanning the codes.
