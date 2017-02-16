@@ -175,6 +175,7 @@ public class QRCodeReaderViewController: UIViewController {
     let shortTap = UITapGestureRecognizer(target: self, action: #selector(QRCodeReaderViewController.FocusCamera))
     shortTap.numberOfTapsRequired = 1
     shortTap.numberOfTouchesRequired = 1
+    readerView.displayable.overlayView?.isUserInteractionEnabled = false
     readerView.displayable.cameraView.addGestureRecognizer(shortTap)
 
     // Setup constraints
@@ -185,6 +186,8 @@ public class QRCodeReaderViewController: UIViewController {
   }
     
     func FocusCamera(_ gesture: UITapGestureRecognizer) {
+        print("focus 0")
+        
         let previewLayer = codeReader.previewLayer
         let device = codeReader.defaultDevice
         
