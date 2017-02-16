@@ -188,18 +188,25 @@ public class QRCodeReaderViewController: UIViewController {
         let previewLayer = codeReader.previewLayer
         let device = codeReader.defaultDevice
         
+        print("focus 1")
+        
         let touchPoint: CGPoint = gesture.location(in: readerView.displayable.cameraView)
         let convertedPoint: CGPoint = previewLayer.captureDevicePointOfInterest(for: touchPoint)
         if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(AVCaptureFocusMode.autoFocus) {
             do {
+                print("focus 2")
+                
                 try device.lockForConfiguration()
                 device.focusPointOfInterest = convertedPoint
                 device.focusMode = AVCaptureFocusMode.autoFocus
+                print("focus 3")
                 device.unlockForConfiguration()
             } catch {
                 print("unable to focus")
             }
         }
+        
+        print("focus 4")
     }
   // MARK: - Controlling the Reader
 
